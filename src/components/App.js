@@ -4,16 +4,12 @@ import { authService } from "fbase";
 
 function App() {
   const [init, setInit] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userObj, setUserObj] = useState(null);
+  const [userObj, setUserObj] = useState(null); //다른 곳에서도 쓰일 수 있는 데이터는 on top 에 있는게 좋다. 그래야 라우터로 보내고 컴포넌트로 보낼 수 있으니까~
 
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
-        setIsLoggedIn(true);
         setUserObj(user); // 1.로그인되면 userObj에 set해준다.
-      } else {
-        setIsLoggedIn(false);
       }
       setInit(true);
     });
@@ -22,11 +18,10 @@ function App() {
   return (
     <>
       {init ? (
-        <AppRouter isLoggedIn={isLoggedIn} userObj={userObj} /> //2. userObj가 router로 넘겨진다.
+        <AppRouter isLoggedIn={Boolean(userObj)} userObj={userObj} /> //2. userObj가 router로 넘겨진다.
       ) : (
         "Initializing..."
       )}
-      <footer>&copy; {new Date().getFullYear()} Nwitter</footer>
     </>
   );
 }
