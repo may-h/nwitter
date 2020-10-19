@@ -10,7 +10,8 @@ import Home from "../routes/Home";
 import Profile from "../routes/Profile";
 import Navigation from "components/Navigation";
 
-const AppRouter = ({ isLoggedIn }) => {
+const AppRouter = ({ isLoggedIn, userObj }) => {
+  //3. userObj를 받아서 Home에 넘겨준다.
   return (
     <Router>
       {isLoggedIn && <Navigation />}
@@ -18,7 +19,7 @@ const AppRouter = ({ isLoggedIn }) => {
         {isLoggedIn ? (
           <>
             <Route exact path="/">
-              <Home />
+              <Home userObj={userObj} />
             </Route>
             <Route exact path="/profile">
               <Profile />

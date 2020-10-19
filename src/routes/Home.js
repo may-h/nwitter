@@ -1,25 +1,43 @@
 import { dbService } from "fbase";
 import React, { useEffect, useState } from "react";
 
-const Home = () => {
+const Home = ({ userObj }) => {
+  // 5. home에서 userObje를 받는다.
   const [nweet, setNweet] = useState("");
   const [nweets, setNweets] = useState([]);
-  const getNweets = async () => {
-    const dbNweets = await dbService.collection("nweets").get(); // get() gives us QueryDocumentSnapshot
-    dbNweets.forEach((doc) => {
-      setNweet((prev) => [doc.data(), ...prev]); //setXXX 메서드에 인자값을 받으면, 갖고 있는 현재(혹은 이전)데이터를 넘겨 받을 수 있다.
-    });
-  };
+
+  // 이전 방식의 get
+  //   const getNweets = async () => {
+  //     const dbNweets = await dbService.collection("nweets").get(); // get() gives us QueryDocumentSnapshot
+  //     dbNweets.forEach((doc) => {
+  //       const nweetObject = {
+  //         ...doc.data(),
+  //         id: doc.id,
+  //       };
+  //       setNweets((prev) => [nweetObject, ...prev]); //setXXX 메서드에 인자값을 받으면, 갖고 있는 현재(혹은 이전)데이터를 넘겨 받을 수 있다.
+  //     });
+  //   };
 
   useEffect(() => {
-    getNweets();
+    // getNweets(); ->옛날 방식... oonSnapshot을 사용하자 (query 대신에 snapshot을 사용)
+    //onSnapshot을 사용하면 re-render하지 않는다. 한번에 가져온다.
+    dbService.collection("nweets").onSnapshot((snapshot) => {
+      //실시간!!!
+      //read, create, delete, update 할때마다
+      const nweetArray = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setNweets(nweetArray);
+    });
   }, []);
 
   const onSubmint = async (event) => {
     event.preventDefault();
     await dbService.collection("nweets").add({
-      nweet,
+      text: nweet,
       createdAt: Date.now(),
+      creatorId: userObj.uid,
     });
     setNweet("");
   };
@@ -43,6 +61,13 @@ const Home = () => {
         />
         <input type="submit" value="Nweet" />
       </form>
+      <div>
+        {nweets.map((nweet) => (
+          <div key={nweet.id}>
+            <h4>{nweet.text}</h4>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
