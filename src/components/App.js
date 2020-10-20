@@ -15,6 +15,8 @@ function App() {
           uid: user.uid,
           updateProfile: (args) => user.updateProfile(args),
         }); // 1.로그인되면 userObj에 set해준다.
+      } else {
+        setUserObj(null);
       }
       setInit(true);
     });
