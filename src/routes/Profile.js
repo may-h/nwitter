@@ -45,17 +45,28 @@ export default ({ userObj, refreshUser }) => {
   };
 
   return (
-    <>
-      <form onSubmit={onSubmit}>
+    <div className="container">
+      <form onSubmit={onSubmit} className="profileForm">
         <input
           type="text"
           placeholder="Display name"
           value={newDisplayName}
           onChange={onChange}
+          autoFocus
+          className="formInput"
         />
-        <input type="submit" value="Update profile" />
-        <button onClick={onLogOutClick}>Log Out</button>
+        <input
+          type="submit"
+          value="Update Profile"
+          className="formBtn"
+          style={{
+            marginTop: 10,
+          }}
+        />
       </form>
-    </>
+      <span className="formBtn cancelBtn logOut" onClick={onLogOutClick}>
+        Log Out
+      </span>
+    </div>
   );
 };
